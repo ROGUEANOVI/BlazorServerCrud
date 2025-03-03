@@ -1,0 +1,139 @@
+﻿@page "/update/{id:int}"
+
+@inject IBookRepository bookRepository
+@inject NavigationManager navigation
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-dark text-center">Editar Libro</h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <EditForm Model="book" OnValidSubmit="@(() => HandleValidSubmit())">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="container">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="title">Título: </label>
+                            </div>
+                            <div class="col-6">
+                                <InputText id="title" @bind-Value="book.Title" class="form-control" placeholder="Ingrese el titulo" />
+                                <ValidationMessage For="() => book.Title" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="description">Descripción: </label>
+                            </div>
+                            <div class="col-6">
+                                <InputText id="description" @bind-Value="book.Description" class="form-control" placeholder="Ingrese la descripción" />
+                                <ValidationMessage For="() => book.Description" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <br />
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="author">Autor: </label>
+                            </div>
+                            <div class="col-6">
+                                <InputText id="author" @bind-Value="book.Author" class="form-control" placeholder="Ingrese el autor" />
+                                <ValidationMessage For="() => book.Author" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="pages">Num. de paginas: </label>
+                            </div>
+                            <div class="col-6">
+                                <InputNumber id="pages" @bind-Value="book.Pages" class="form-control" />
+                                <ValidationMessage For="() => book.Pages" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="price">Precio: </label>
+                            </div>
+                            <div class="col-6">
+                                <InputNumber id="rice" @bind-Value="book.Price" class="form-control" />
+                                <ValidationMessage For="() => book.Price" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-floppy-fill"></i>
+                                    Actualizar
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button @onclick="@(() => navigation.NavigateTo("/books"))" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-90deg-left"></i>
+                                    Volver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; } 
+
+    private Book book = new Book() { Title = "", Author = "" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is null) navigation.NavigateTo("/books");
+
+        var bookModel = await bookRepository.GetBookById(Id!.Value);
+
+        if (bookModel is not null) book = bookModel;
+        
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        if (Id is null) navigation.NavigateTo("/books");
+
+        await bookRepository.UpdateBook(Id!.Value, book);
+        
+        navigation.NavigateTo("/books");
+    }
+}

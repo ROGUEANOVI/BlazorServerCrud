@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorServerCrud.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250127211821_BookTable")]
-    partial class BookTable
+    [Migration("20250302230412_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

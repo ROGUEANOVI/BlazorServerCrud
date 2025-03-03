@@ -1,0 +1,72 @@
+﻿@page "/books"
+
+@inject IBookRepository bookRepository
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-dark text-center">Lista de Libros</h2>
+                <a href="/create">
+                    <i class="bi bi-plus-square-fill"></i>
+                    Agregar Libro
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table-responsive table-striped table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Título</th>
+                            <th>Descripcion</th>
+                            <th>Author</th>
+                            <th>Páginas</th>
+                            <th>Precio</th>
+                            <th>Fecha Publicación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in books)
+                        {
+                            <tr>
+                                <td>@book.Id</td>
+                                <td>@book.Title</td>
+                                <td>@book.Description</td>
+                                <td>@book.Author</td>
+                                <td>@book.Pages</td>
+                                <td>@book.Price</td>
+                                <td>@book.CreationDate</td>
+                                <td>
+                                    <a href="/update/@book.Id" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <button @onclick="@(() => DeleteBook(book.Id))" class="btn btn-danger">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Book> books = new List<Book>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await bookRepository.GellAllBooks();
+    }
+
+    private async Task DeleteBook(int id)
+    {
+        await bookRepository.DeleteBook(id);
+        books = await bookRepository.GellAllBooks();
+    }
+}

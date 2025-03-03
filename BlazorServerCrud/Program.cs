@@ -1,5 +1,6 @@
 using BlazorServerCrud.Components;
 using BlazorServerCrud.Data;
+using BlazorServerCrud.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -30,5 +33,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseStatusCodePagesWithRedirects("/notfound");
 
 app.Run();

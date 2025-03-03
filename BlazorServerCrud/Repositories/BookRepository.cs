@@ -1,5 +1,6 @@
 ﻿using BlazorServerCrud.Data;
 using BlazorServerCrud.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorServerCrud.Repositories
 {
@@ -13,29 +14,55 @@ namespace BlazorServerCrud.Repositories
             _context = context;
         }
 
-        public Task<Book> CreateBook(Book book)
+        public async Task<Book> CreateBook(Book book)
         {
-            throw new NotImplementedException();
+            if (book is null) return new Book() { Title = "" , Author = "" };
+
+            book.CreationDate = DateTime.Now;
+            await _context.Books.AddAsync(book);
+            await _context.SaveChangesAsync();
+            
+            return book;
         }
 
-        public Task DeleteBook(int id)
+        public async Task DeleteBook(int id)
         {
-            throw new NotImplementedException();
+            var bookToDelete = await _context.Books.FindAsync(id);
+
+            _context.Books.Remove(bookToDelete);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<List<Book>> GellAllBooks()
+        public async Task<List<Book>> GellAllBooks()
         {
-            throw new NotImplementedException();
+            return await _context.Books.ToListAsync();
         }
 
-        public Task<Book?> GetBookById(int id)
+        public async Task<Book?> GetBookById(int id)
         {
-            throw new NotImplementedException();
+            var book = await _context.Books.FindAsync(id);
+
+            if (book is null) return null;
+
+            return book;
         }
 
-        public Task<Book?> UpdateBook(int id, Book book)
+        public async Task<Book?> UpdateBook(int id, Book book)
         {
-            throw new NotImplementedException();
+            var bookToUpdate = await _context.Books.FindAsync(id);
+           
+            if (bookToUpdate is null) return null;
+
+            bookToUpdate.Title = book.Title;
+            bookToUpdate.Author = book.Author;
+            bookToUpdate.Description = book.Description;
+            bookToUpdate.Pages = book.Pages;
+            bookToUpdate.Price = book.Price;
+            bookToUpdate.CreationDate = book.CreationDate;
+
+            await _context.SaveChangesAsync();
+
+            return bookToUpdate;
         }
     }
 }
